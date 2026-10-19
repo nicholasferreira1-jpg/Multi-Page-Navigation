@@ -1,20 +1,20 @@
 import './Header.css';
+import { Link } from "react-router-dom"; 
+
 
 function Header( {cartCount}) {
   return (
     <header className="header">
       <div className="header-inner">
-        <a href="/" className="logo">First E-commerce Store</a>
+        <Link to="/" className="logo">First E-commerce Store</Link>
         <nav className="nav">
-          <a href="#home">Home</a>
-          <a href="#products">Products</a>
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
+          <Link to="/">Home</Link>
+          <Link to="/products">Products</Link>
         </nav>
-        <div className="cart-wrapper">
+        <Link to="/cart" className="cart-wrapper">
           <span className="cart-icon">🛒</span>
           <span className="cart-badge">{cartCount}</span>
-        </div>
+        </Link>
       </div>
     </header>
   );

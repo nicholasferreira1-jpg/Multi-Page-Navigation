@@ -1,14 +1,14 @@
 // App.jsx
 import Header from './components/Header';  // Import your component 
-import ProductCard from './components/ProductCard';  // Import your component
-import Hero from './components/Hero';  // Import your component
-
-import CartItem from './components/CartItem';
 import Footer from './components/Footer';  // Import your component
-import {useState} from 'react';
+import { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'; 
+import HomePage from './pages/HomePage';
+import CartPage from './pages/CartPage';
+import ProductsPage from './pages/ProductsPage';
+import ProductsDetailPage from './pages/ProductsDetailsPage';
 
-function App() {
-  const product = [
+const defaultProducts = [
   { 
     id: 1, 
     name: "Wireless Headphones", 
@@ -52,8 +52,23 @@ function App() {
     description: "RGB backlit keyboard with custom switches"
   }
 ];
-  const [cart, setCart] = useState([]);
-  const totalPrice = cart.reduce((total, item) => total + item.price, 0);
+
+function App() {
+  const [cart, setCart] = useState(() => {
+    const savedProducts = localStorage.getItem('cart');
+    return savedProducts ? JSON.parse(savedProducts) : defaultProducts;
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+    catch {
+      console.warn('Could not save cart to localStorage:', error);
+    }
+  }, [cart])
+
+  const totalPrice = cart.reduce((total, item) => total + item.price, 0).toFixed(2);
 
   const addToCart = (product) => {
     setCart([...cart, product]);
@@ -65,47 +80,18 @@ function App() {
 
 
   return (
-    <div className="ap">
-      <Header cartCount = {cart.length}/>
-      <Hero
-        title="Welcome to First E-commerce Store"
-        subtitle="Your one-stop shop for all your needs"
-        cta="Shop Now"
-        image="https://placehold.co/1200x400/667eea/ffffff?text=Shop+Electronics "
-      />
-      <h2 style={{ textAlign: 'center' }}>Featured Product</h2>
-      {product.map((product) => (
-        <ProductCard
-          key={product.id}
-          name={product.name}
-          price={product.price}
-          image={product.image}
-          description={product.description}
-          onAddToCart={() => addToCart(product)}
-        />
-      ))}
-      <section className="cart-section">
-        <h2>Your Cart</h2>
-        {cart.length > 0 ? (
-          cart.map((item,index) => (
-            <CartItem
-              key={index}
-              name={item.name}
-              price={item.price}
-              onRemove={() => removeFromCart(index)}
-            />
-          ))
-        ) : (
-          <div className="cart-empty">
-            <p className="cart-empty">Your cart is empty.</p>
-          </div>
-        )}
-        <div className="cart-total">
-          <h3>Total: ${totalPrice}</h3>
-        </div>
-      </section>
-      <Footer />
-    </div>
+    <BrowserRouter>
+      <div className="app">
+        <Header cartCount={cart.length}/>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/cart" element={<CartPage removeFromCart={removeFromCart} cart={cart} totalPrice={totalPrice} />} />
+          <Route path="/products" element={<ProductsPage products={defaultProducts} addToCart = {addToCart} />} />
+          <Route path="/products/:id" element={<ProductsDetailPage  products={defaultProducts} addToCart={addToCart} />}/>
+        </Routes>
+        <Footer />
+      </div>
+    </BrowserRouter>
   );
 }
 

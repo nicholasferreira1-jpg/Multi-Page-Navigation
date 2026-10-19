@@ -1,4 +1,5 @@
 import './Footer.css';
+import { Link } from 'react-router-dom';
 
 function Footer() {
   return (
@@ -11,10 +12,8 @@ function Footer() {
             <p>Address: 123 React Street, Component City, RC 12345</p>
         </div>
         <nav className="footer-nav">
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
-          <a href="#privacyPolicy">Privacy Policy</a>
-          <a href="#termsofService">Terms of Service</a>
+          <Link to="/">Home</Link>
+          <Link to="/products">Products</Link>
         </nav>
         
       </div>
